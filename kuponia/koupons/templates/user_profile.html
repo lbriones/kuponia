@@ -1,0 +1,168 @@
+{% extends "base_kuponia.html" %}
+{% load i18n %}
+{% load static %}
+{% load bootstrap_toolkit %}
+
+
+
+
+{% block head %}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Sorpréndete con increíbles descuentos">
+    <meta name="author" content="Kuponia.cl">
+    <link rel="shortcut icon" href="img/favicon.ico">
+    <title>Kuponia - Sorpréndete con increíbles descuentos</title>
+
+    <!-- Bootstrap -->
+    <link href="{% static 'kuponia_theme/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet"/>
+    <meta property="og:title" content="Kuponia - Sorpréndete con increíbles descuentos" />
+    <meta property="og:url" content="http://www.kuponia.cl" />
+    <meta property="og:description" content="Conectate a nuestra promociones y ofertas." />
+    <meta property="og:image" content="http://www.kuponia.cl/images/bg7.jpg" />
+  <style type="text/css">
+    body {
+      padding-top: 90px;
+    }
+  </style>
+
+    
+</head>
+{% endblock %}
+
+
+{% block title %}{% firstof user_obj.email %}{% endblock %}
+
+{% block content %}
+<style type="text/css">
+a.list-group-item {
+    height:auto;
+    min-height:220px;
+}
+a.list-group-item.active small {
+    color:#fff;
+}
+.stars {
+    margin:20px auto 1px;    
+}
+</style>
+
+
+<div class="container">
+    <div class="row">
+        <div class="well">
+        <h1 class="text-center">Tus cupones</h1>
+        <div class="list-group">
+    {% for coupon in user_obj.favorites.all %}
+          <a href="/koupons/{{ coupon.slug }}" class="list-group-item">
+                <div class="media col-md-3">
+                    <figure class="pull-left">
+                        <img class="media-object img-rounded img-responsive" src="{{ coupon.imagen.url }}" alt="{{ coupon.title }}" >
+                    </figure>
+                </div>
+                <div class="col-md-6">
+                    <h4 class="list-group-item-heading"> {{ coupon.title }} </h4>
+                    <p class="list-group-item-text"> 
+                        {{ coupon.body|slice:":400" }}
+                    </p>
+                    <p class="list-group-item-text"> 
+                        Valido hasta: {{ coupon.valid_until|date:"d-M-Y" }}
+                    </p>
+                </div>
+                <div class="col-md-3 text-center">
+                    <h2> {{ coupon.value }} <small> % </small></h2>
+                    <form action="/koupons/{{ coupon.slug }}/hello.pdf">
+                        <button class="btn btn-info btn-primary btn-lg btn-block">Descargar</button>
+                    </form>
+                <!--
+                    <div class="stars">
+                        <span class="glyphicon glyphicon-star"></span>
+                        <span class="glyphicon glyphicon-star"></span>
+                        <span class="glyphicon glyphicon-star"></span>
+                        <span class="glyphicon glyphicon-star"></span>
+                        <span class="glyphicon glyphicon-star-empty"></span>
+                    </div>
+                -->
+                    <p>  <small> </small>  </p>
+                </div>
+          </a>
+    {% empty %}
+        No tienes cupones reservados!
+    {% endfor %}
+        </div>
+        </div>
+    </div>
+</div>
+<!-- END container -->    
+    
+{% endblock content %}
+
+
+
+{% block footer %}
+<script src="{% static 'kuponia_theme/bootstrap/js/jquery.js' %}"></script>
+<script src="{% static 'kuponia_theme/bootstrap/js/jquery.leanModal.min.js' %}"></script>
+<link type="text/css" rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css' %}" />
+<script type="text/javascript">
+    //$("#modal_trigger").leanModal({top : 200, overlay : 0.6, closeButton: ".modal_close" });
+    $("a[rel*=leanModal]").leanModal({top : 200, overlay : 0.6, closeButton: ".modal_close" });
+    $(function(){
+        // Calling Login Form
+        $("#login_form").click(function(){
+            $(".view_cupon").hide();
+            $(".user_login").show();
+            return false;
+        });
+        // Calling Register Form
+        $("#register_form").click(function(){
+            $(".view_cupon").hide();
+            $(".user_register").show();
+            $(".header_title").text('Register');
+            return false;
+        });
+        // Going back to Social Forms
+        $(".back_btn").click(function(){
+            $(".user_login").hide();
+            $(".user_register").hide();
+            $(".view_cupon").show();
+            $(".header_title").text('Login');
+            return false;
+        });
+    })
+</script>
+    <!-- Boxend -->
+<script>
+      $(function(){
+    
+        var $container = $('#containerCoupons');
+      
+        $container.imagesLoaded( function(){
+          $container.masonry({
+            itemSelector : '.box',
+            isFitWidth: true,
+            isAnimated: true
+          });
+        });
+      
+      });
+    </script>
+
+
+    <!-- jQuery  
+    <script src="{% static 'kuponia_theme/bootstrap/js/jquery.js' %}"></script>
+    -->
+    <script src="http://panel.5d2.cl/static/kuponia_theme/bootstrap/js/jquery.js"></script>
+    
+    <!-- bootstrap -->
+    <script src="http://panel.5d2.cl/static/kuponia_theme/bootstrap/js/bootstrap.min.js"></script>
+
+<!-- CSS Files -->
+    <link href="http://panel.5d2.cl/static/kuponia_theme/coupons/couponstyle.css" rel="stylesheet"/>
+<!-- JS Files -->
+    <!-- Masonry -->
+    <script src="http://panel.5d2.cl/static/kuponia_theme/coupons/jquery.masonry.min.js"></script>
+    
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet" />
+
+{% endblock %}

@@ -1,0 +1,189 @@
+{% extends "base_kuponia.html" %}
+{% load url from future%}
+{% load i18n %}
+{% load static %}
+{% load bootstrap_toolkit %}
+
+{% block head %}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Sorpréndete con increíbles descuentos">
+    <meta name="author" content="Kuponia.cl">
+    <link rel="shortcut icon" href="img/favicon.ico">
+    <title>Kuponia - Sorpréndete con increíbles descuentos</title>
+
+    <!-- Bootstrap -->
+    <link href="{% static 'kuponia_theme/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet"/>
+    <meta property="og:title" content="Kuponia - Sorpréndete con increíbles descuentos" />
+    <meta property="og:url" content="http://www.kuponia.cl" />
+    <meta property="og:description" content="Conectate a nuestra promociones y ofertas." />
+    <meta property="og:image" content="http://www.kuponia.cl/images/bg7.jpg" />
+
+    <meta name="google-site-verification" content="AIzaSyBfTGZQIbjYsgIrUtvbYVkKJuMWSAbQ-uM" />
+
+
+      <style type="text/css">
+        body {
+          padding-top: 90px;
+        }
+      </style>
+
+    
+
+
+    <style type="text/css">
+        html {
+            height: 100%
+        }
+        body {
+            height: 100%; margin: 0; padding: 0
+        }
+        #map-canvas { height: 100% }
+        .imgContent {
+            width: 150px;
+            padding-right: 20px;
+            float: left;
+        }
+        .bodyContent {
+            width: 300px;
+            float: left;
+        }
+        .bodyContent h3 {
+            margin: 0px 0px;
+        }
+        #map-canvas img {
+            max-width: none;
+        }
+        #map-canvas label { width: auto; display:inline; }
+        #map-canvas img { max-width: none; }
+    </style>
+    <script type="text/javascript"
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBfTGZQIbjYsgIrUtvbYVkKJuMWSAbQ-uM&sensor=true">
+    </script>
+    <script type="text/javascript">
+        var app =  new function () {
+            var myOptions = {
+                center: new google.maps.LatLng(-34.397, 150.644),
+                zoom: 14,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                mapTypeControl: false,
+                zoomControl: true,
+                panControl : false,
+                rotateControl : false,
+                scaleControl : false,
+                overviewMapControl : false
+            };
+            var me = this;
+            var appMap;
+            var appGeocoder;
+            var currentPosition;
+            var markers;
+            var socket;
+            return {
+                init : function() {
+                    var that = this;
+                    this.updateCurrentPosition();
+                    me.appGeocoder = new google.maps.Geocoder();
+                    me.appMap = new google.maps.Map(document.getElementById("map-canvas"),myOptions);
+                },
+                updateCurrentPosition : function() {
+                    if (navigator.geolocation) {
+                        var that = this;
+                        navigator.geolocation.getCurrentPosition(function( position ){
+                                    // Log that this is the initial position.
+                                    console.log( "Position Found" );
+                                    var calculatedPosition = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+                                    if (me.currentPosition === undefined) {
+                                        me.appMap.setCenter(calculatedPosition);
+                                    }
+                                    me.currentPosition = calculatedPosition;
+                                    that.getAuctions();
+                                },
+                                function( error ){
+                                    console.log( "Something went wrong: ", error );
+                                    me.currentPosition =   new google.maps.LatLng(-34.397, 150.644);
+                                },
+                                {
+                                    maximumAge:Infinity,
+                                    enableHighAccuracy: true
+                                } );
+                    } else {
+                        alert('I guess this browser does not support geolocation!');
+                    }
+                },
+                getAuctions: function() {
+                    var that = this;
+                    {% for coupon in object_list %}
+                        me.appGeocoder.geocode( { 'address': '{{coupon.address}}'}, function(results, status) {
+                            if (status == google.maps.GeocoderStatus.OK) {
+                                that.displayAuction({
+                                    id : {{ coupon.id }},
+                                    loc : [{{coupon.position.latitude}}, {{coupon.position.longitude}}],
+                                    name: '{{ coupon.title }}',
+                                    address: '{{coupon.address}}'
+                                });
+                            } else {
+                                console.log("Geocode was not successful for the following reason: " + status);
+                            }
+                        });
+                    {% endfor %}
+                },
+
+
+
+                displayAuction: function(coupon) {
+                    var that = this;
+                    var auctionMarker = new google.maps.Marker({
+                        position: new google.maps.LatLng(coupon.loc[0], coupon.loc[1]),
+                        map: me.appMap,
+                        animation: google.maps.Animation.DROP,
+                        title : coupon.title
+                    });
+                    that.complementAuction(auctionMarker, coupon);
+                    return auctionMarker;
+                },
+                complementAuction: function (auctionMarker, coupon) {
+                    var that = this;
+                    var img = '<a href="/favorite_coupon/' + coupon.id + '" target="_blank"><img src="{{ coupon.imagen.url }}"></a>';
+                    var contentString =
+                                    '<div class="content">' +
+                                    '   <div class="imgContent">' + img + '</div>' +
+                                    '   <div class="bodyContent">' +
+                                    '       <h3>' + coupon.title + '</h3>' +
+                                    '       <address>santiago, chile</address>' +
+                                    '       <a class="btn btn-success" href="/favorite_coupon/' + coupon.id + '">Lo quiero!</a>' +
+                                    '       <span class="price">500</span>' +
+                                    '   </div>' +
+                                    '</div>';
+                    var infowindow = new google.maps.InfoWindow({content:contentString});
+                    google.maps.event.addListener(auctionMarker, 'click', function () {
+                        infowindow.open(me.appMap, auctionMarker);
+                    });
+                }
+            }
+        }
+    </script>
+</head>
+{% endblock %}
+
+
+
+
+
+{% block content %}
+<body onload="app.init()">
+
+<div id="map-canvas"/>
+
+<script>
+</script>
+
+{% endblock %}
+
+{% block footer %}
+
+
+
+
+{% endblock %}

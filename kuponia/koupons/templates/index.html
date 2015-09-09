@@ -1,0 +1,85 @@
+{% extends "base_kuponia.html" %}
+{% load i18n %}
+{% load static %}
+{% load bootstrap_toolkit %}
+
+{% block head %}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Sorpréndete con increíbles descuentos">
+    <meta name="author" content="Kuponia.cl">
+    <link rel="shortcut icon" href="img/favicon.ico">
+    <title>Kuponia - Sorpréndete con increíbles descuentos</title>
+
+    <!-- Bootstrap -->
+    <link href="http://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet" type="text/css">
+    <link href="{% static 'kuponia_theme/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet"/>
+    <meta property="og:title" content="Kuponia - Sorpréndete con increíbles descuentos" />
+    <meta property="og:url" content="http://www.kuponia.cl" />
+    <meta property="og:description" content="Conectate a nuestra promociones y ofertas." />
+    <meta property="og:image" content="http://www.kuponia.cl/images/bg7.jpg" />
+  <style type="text/css">
+    body {
+      padding-top: 90px;
+    }
+  </style>
+    <!-- custom -->
+    <link rel="stylesheet" href="{% static 'kuponia_theme/landing/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'kuponia_theme/landing/boostrap_responsive.css' %}">
+</head>
+{% endblock %}
+
+{% block content %}
+
+    
+    <div class="container">
+        <div class="row">
+            <div class="span12">
+                <div class="row row-wrap">
+                {% for coupon in object_list %}
+                    <div class="span3">
+                        <!-- COUPON THUMBNAIL -->
+                        <a href="/koupons/{{ coupon.slug }}" class="coupon-thumb">
+                            <img src="{{ coupon.imagen.url }}" alt="{{ coupon.title }}" title="{{ coupon.title }}">
+                            <div class="coupon-inner">
+                                <h5 class="coupon-title">{{ coupon.title }}</h5>
+                                <p class="coupon-desciption">{{ coupon.body|slice:":50" }}...</p>
+                                <div class="coupon-meta"><span class="coupon-time">Valido hasta: {{ coupon.valid_until|date:"d-M-Y" }}</span><span class="coupon-save">Save 65%</span>
+                                    <div class="coupon-price"><span class="coupon-old-price">{{ coupon.value }}$</span><span class="coupon-new-price">${{ coupon.value }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+                </div>
+                <!--
+                <div class="pagination">
+                    <ul>
+                        <li class="prev disabled">
+                            <a href="#"></a>
+                        </li>
+                        <li class="active"><a href="#">1</a>
+                        </li>
+                        <li><a href="#">2</a>
+                        </li>
+                        <li><a href="#">3</a>
+                        </li>
+                        <li><a href="#">4</a>
+                        </li>
+                        <li><a href="#">5</a>
+                        </li>
+                        <li class="next">
+                            <a href="#"></a>
+                        </li>
+                    </ul>
+                </div>
+                -->
+                <div class="gap">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

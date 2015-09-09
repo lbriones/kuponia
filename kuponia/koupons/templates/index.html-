@@ -1,0 +1,102 @@
+{% extends "base_kuponia.html" %}
+{% load i18n %}
+{% load static %}
+{% load bootstrap_toolkit %}
+
+{% block head %}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Sorpréndete con increíbles descuentos">
+    <meta name="author" content="Kuponia.cl">
+    <link rel="shortcut icon" href="img/favicon.ico">
+    <title>Kuponia - Sorpréndete con increíbles descuentos</title>
+
+    <!-- Bootstrap -->
+    <link href="{% static 'kuponia_theme/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet"/>
+    <meta property="og:title" content="Kuponia - Sorpréndete con increíbles descuentos" />
+    <meta property="og:url" content="http://www.kuponia.cl" />
+    <meta property="og:description" content="Conectate a nuestra promociones y ofertas." />
+    <meta property="og:image" content="http://www.kuponia.cl/images/bg7.jpg" />
+  <style type="text/css">
+    body {
+      padding-top: 90px;
+    }
+  </style>
+
+    
+</head>
+{% endblock %}
+
+{% block content %}
+
+	<script src="{% static 'kuponia_theme/bootstrap/js/jquery.js' %}"></script>
+
+    <!-- containerCoupons -->
+    <div id="containerCoupons" style="background-color: rgba(0,0,0,0.2);">
+	
+		{% for coupon in object_list %}
+	    <div class="box photo col3">
+	    <!--<div class="discount_value">{{ coupon.discount }}%</div>-->
+	      <a href="/koupons/{{ coupon.slug }}" title="Photo by Dieter Schneider"><img src="{{ coupon.imagen.url }}" alt="{{ coupon.title }}" /></a>
+	      <h3><a href="/koupons/{{ coupon.slug }}">{{ coupon.title }}</a></h3>
+	      <p>Precio: ${{ coupon.value }}</p>
+	      <p>{{ coupon.body|slice:":140" }}...</p>
+	      <p>Valido hasta: {{ coupon.valid_until|date:"d-M-Y" }}</p>
+	      <!--<p>{{ coupon.id }}</p>
+	      <p>{{ request.user.id }}</p>-->
+			{% if user.is_authenticated %}
+				{% if coupon in request.user.favorites.all %}
+					<button class="btn btn-success btn-large disabled"><i class="glyphicon glyphicon-thumbs-up"></i> Lo tengo!</button>
+				{% else %}
+				<form method="post" action="{% url 'favorite_coupon' coupon.id %}">{% csrf_token %}
+					<button class="btn btn-info btn-large"><i class="glyphicon glyphicon-hand-right"></i> Lo quiero!</button>
+				</form>
+				{% endif %}
+			{% else %}
+				<form action="{% url 'account_login' %}">{% csrf_token %}
+					<button class="btn btn-info btn-large"><i class="glyphicon glyphicon-hand-right"></i> Lo quiero!</button>
+				</form>
+			{% endif %}
+		    
+		</div>
+		{% endfor %}
+   </div>
+    <!-- END container -->
+
+{% endblock %}
+
+{% block footer %}
+<script>
+  $(function(){
+
+    var $container = $('#containerCoupons');
+  
+    $container.imagesLoaded( function(){
+      $container.masonry({
+        itemSelector : '.box',
+		isFitWidth: true,
+		isAnimated: true
+      });
+    });
+  
+  });
+</script>
+
+<!-- jQuery --> 
+<script src="{% static 'kuponia_theme/bootstrap/js/jquery.js' %}"></script>
+<script src="{% static 'kuponia_theme/bootstrap/js/jquery.leanModal.min.js' %}"></script>
+
+<script src="http://panel.5d2.cl/static/kuponia_theme/bootstrap/js/jquery.js"></script>
+
+<!-- bootstrap -->
+<script src="http://panel.5d2.cl/static/kuponia_theme/bootstrap/js/bootstrap.min.js"></script>
+
+<!-- CSS Files -->
+<link href="http://panel.5d2.cl/static/kuponia_theme/coupons/couponstyle.css" rel="stylesheet"/>
+<!-- JS Files -->
+<!-- Masonry -->
+<script src="http://panel.5d2.cl/static/kuponia_theme/coupons/jquery.masonry.min.js"></script>
+
+
+{% endblock %}

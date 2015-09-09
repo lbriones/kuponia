@@ -1,0 +1,109 @@
+{% load i18n %}
+{% load url from future %}
+{% load static %}
+{% load account %}
+<!doctype html>
+{% block html %}
+<html lang="en">
+{% endblock %}
+
+{% block head %}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Sorpréndete con increíbles descuentos">
+    <meta name="author" content="Kuponia.cl">
+    <link rel="shortcut icon" href="img/favicon.ico">
+    <title>Kuponia - Sorpréndete con increíbles descuentos</title>
+
+    <!-- Bootstrap -->
+    <link href="http://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet" type="text/css">
+    <link href="{% static 'kuponia_theme/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet"/>
+    <meta property="og:title" content="Kuponia - Sorpréndete con increíbles descuentos" />
+    <meta property="og:url" content="http://www.kuponia.cl" />
+    <meta property="og:description" content="Conectate a nuestra promociones y ofertas." />
+    <meta property="og:image" content="http://www.kuponia.cl/images/bg7.jpg" />
+  <style type="text/css">
+    body {
+      padding-top: 90px;
+    }
+  </style>
+    <!-- custom -->
+    <link rel="stylesheet" href="{% static 'kuponia_theme/landing/styles.css' %}">
+</head>
+{% endblock %}
+
+<body>
+    <!-- Navigation -->
+    {% block nav %}
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>                        
+          </button>
+          <a class="navbar-brand" href="{% url 'index' %}">{% trans "Kuponia" %}</a>
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+          <ul class="nav navbar-nav">
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="">Cupones<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Servicios</a></li>
+                <li><a href="#">Page 1-2</a></li>
+                <li><a href="#">Page 1-3</a></li>
+              </ul>
+            </li>
+            <li><a href="#">Quienes somos</a></li>
+            <li><a href="#">Contactanos</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+	{% if user.is_authenticated %}
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-user"></span> {% trans "Hola " %} {{ request.user.first_name}}</a>
+              <ul class="dropdown-menu">
+
+                <li><a href="{% url 'user_profile' user.id %}"> {% trans "Mis cupones" %}</a></li>
+                <li><a href="{% url 'account_logout' %}"><span class="glyphicon glyphicon-log-out"></span> {% trans "Cerrar sesion" %}</a></li>
+              </ul>
+            </li>
+	{% else %}
+                <li>
+                    <a href="{% url 'account_signup' %}"><span class="glyphicon glyphicon-user"></span> Registrarse</a>
+                </li>
+                <li>
+                   <a href="{% url 'account_login' %}"><span class="glyphicon glyphicon-log-in"></span> {% trans "Iniciar sesion" %}</a>
+                </li>
+	{% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
+    {% endblock %}
+    
+
+{% block content %}
+{% endblock content %}
+   
+{% block footer %}
+<!-- jQuery --> 
+<script src="{% static 'kuponia_theme/bootstrap/js/jquery.js' %}"></script>
+<script src="{% static 'kuponia_theme/bootstrap/js/jquery.leanModal.min.js' %}"></script>
+
+<script src="http://panel.5d2.cl/static/kuponia_theme/bootstrap/js/jquery.js"></script>
+
+<!-- bootstrap -->
+<script src="http://panel.5d2.cl/static/kuponia_theme/bootstrap/js/bootstrap.min.js"></script>
+
+<!-- CSS Files -->
+<link href="http://panel.5d2.cl/static/kuponia_theme/coupons/couponstyle.css" rel="stylesheet"/>
+<!-- JS Files -->
+<!-- Masonry -->
+<script src="http://panel.5d2.cl/static/kuponia_theme/coupons/jquery.masonry.min.js"></script>
+{% endblock %}
+
+
+</body>
+</html>
